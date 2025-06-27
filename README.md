@@ -61,6 +61,9 @@ O princípio de funcionamento explora a relação linear que existe entre a tens
 
 ---
 
+
+![image](https://github.com/user-attachments/assets/c70c6e0e-c489-4e90-ba06-1f685e367dfe)
+
 ## Software do Projeto
 
 O projeto foi feito no Vscode (Visual Studio Code), com a extensão Raspberry Pi Pico, na linguagem C/C++ em SDK Pico
@@ -93,9 +96,6 @@ Esses valores de calibração (`0.6264` e `-0.0021`) não são arbitrários. Ele
 
 ---
 
-
-
-![image](https://github.com/user-attachments/assets/c70c6e0e-c489-4e90-ba06-1f685e367dfe)
 
 
 ## Referências
