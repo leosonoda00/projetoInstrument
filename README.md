@@ -6,6 +6,9 @@ O princípio de funcionamento explora a relação linear que existe entre a tens
 
 ![image](https://github.com/user-attachments/assets/e324176e-713f-46a3-8d78-a148e0cbfb3a) ![image](https://github.com/user-attachments/assets/7b225a1c-8830-499e-8062-d8e8a5066d73)
 ![image](https://github.com/user-attachments/assets/fd949ad4-a5ea-4863-9156-2e188ff26bcc)
+
+**Para um entendimento completo do projeto, a leitura do artigo é fortemente recomendada, que se encontra em `artigo_instrumentacao`**
+
 ## Funcionalidades
 
 - **Leitura de Temperatura:** Utiliza a variação de tensão em um diodo comum (1N4148) para aferir a temperatura ambiente.
