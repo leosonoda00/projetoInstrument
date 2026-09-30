@@ -1,105 +1,95 @@
-# Monitoramento de Temperatura de uma composteira com Raspberry Pi Pico e Display OLED 
+# Composting Temperature Monitor with Raspberry Pi Pico & OLED Display
 
-Este projeto, desenvolvido para as disciplinas de Instrumentação Eletrônica (ECA409) e Sistemas Microcontrolados (ECA407), apresenta o desenvolvimento de um sistema completo para o monitoramento de temperatura em composteiras. A base do sistema é a construção de um sensor de temperatura, que utilizando o diodo 1N4148 como principal elemento. 
+![Status](https://img.shields.io/badge/Status-Completed-success)
+![Language](https://img.shields.io/badge/Language-C/C++-blue)
+![Platform](https://img.shields.io/badge/Platform-Raspberry_Pi_Pico-red)
 
-O princípio de funcionamento explora a relação linear que existe entre a tensão de polarização direta do diodo e a temperatura ambiente. O hardware é centrado no microcontrolador Raspberry Pi Pico (RP2040), que realiza o condicionamento do sinal e o processamento dos dados, feito em C/C++ utiliza o Pico SDK. Os resultados da medição são exibidos em tempo real em um display OLED para fácil visualização. 
+## About the Project
 
-![image](https://github.com/user-attachments/assets/e324176e-713f-46a3-8d78-a148e0cbfb3a) ![image](https://github.com/user-attachments/assets/7b225a1c-8830-499e-8062-d8e8a5066d73)
+This project was developed for the Electronic Instrumentation (ECA409) and Microcontroller Systems (ECA407) courses. It introduces a complete system for monitoring internal temperatures in composting bins.
+
+The core of the system relies on using a standard 1N4148 diode as the temperature sensing element, exploiting the linear relationship between its forward bias voltage and ambient temperature. The hardware is driven by a Raspberry Pi Pico (RP2040) running custom C/C++ firmware built using the Pico SDK, which handles signal conditioning, data processing, and real-time visualization on an OLED display.
+
+![image](https://github.com/user-attachments/assets/e324176e-713f-46a3-8d78-a148e0cbfb3a) 
+![image](https://github.com/user-attachments/assets/7b225a1c-8830-499e-8062-d8e8a5066d73)
 ![image](https://github.com/user-attachments/assets/fd949ad4-a5ea-4863-9156-2e188ff26bcc)
 
-**Para um entendimento completo do projeto, a leitura do artigo é fortemente recomendada, que se encontra em `artigo_instrumentacao`**
+**For a comprehensive understanding of the project and methodology, reading the academic paper provided in the `artigo_instrumentacao` directory is highly recommended.**
 
-## Funcionalidades
+## Key Features
 
-- **Leitura de Temperatura:** Utiliza a variação de tensão em um diodo comum (1N4148) para aferir a temperatura ambiente.
-- **Filtro de Média Móvel:** Suaviza as leituras do sensor para fornecer um valor mais estável e preciso.
-- **Display OLED:** Exibe a tensão lida e a temperatura (em °C ou °F) em um display OLED de 128x32 pixels.
-- **Botão de Interação:** Permite ao usuário alternar a unidade de temperatura entre Celsius (°C) e Fahrenheit (°F) com um simples clique.
-- **LED Indicador:** Acende para indicar visualmente que a temperatura está abaixo de um limiar pré-definido (40°C no código).
-- **Eficiência Energética:** Utiliza o modo `sleep` (Wait For Interrupt) para minimizar o consumo de energia, "acordando" apenas para realizar leituras ou responder a eventos.
+- **Temperature Reading:** Utilizes the voltage variation across a common diode (1N4148) to measure ambient temperature.
+- **Moving Average Filter:** Smooths the sensor readings to provide a more stable and accurate value.
+- **OLED Display:** Shows the measured voltage and temperature (in °C or °F) on a 128x32 pixel OLED screen.
+- **User Interaction:** Allows the user to toggle the temperature unit between Celsius (°C) and Fahrenheit (°F) with a simple button click.
+- **LED Indicator:** Visually alerts when the temperature falls below a predefined threshold (set to 40°C in the code).
+- **Power Efficiency:** Uses the `sleep` mode (Wait For Interrupt) to minimize energy consumption, waking up only to perform readings or respond to events.
 
----
+## Hardware Requirements
 
-## Hardware Necessário
+| Component | Quantity | Notes |
+| :--- | :--- | :--- |
+| Raspberry Pi Pico | 1 | Main microcontroller. |
+| OLED Display 128x32 I2C | 1 | Model with SSD1306 driver. |
+| 1N4148 Diode | 1 | Used as the temperature sensor. |
+| 10kΩ Resistor | 1 | Current limiting resistor for the diode. |
+| Push Button | 1 | To switch the unit of measurement. |
+| LED (5mm, any color) | 1 | Visual indicator. |
+| 330Ω Resistor | 1 | Current limiting resistor for the LED. |
+| 1N4007 Diode | 1 | Reverse polarity protection for the power supply. |
+| Breadboard and Jumpers | - | For circuit assembly. |
 
-| Componente                | Quantidade | Observações                               |
-| :------------------------ | :--------- | :---------------------------------------- |
-| Raspberry Pi Pico         | 1          | -           |
-| Display OLED 128x32 I2C   | 1          | Modelo com driver SSD1306.                |
-| Diodo 1N4148              | 1          | Usado como sensor de temperatura.         |
-| Resistor de 10kΩ          | 1          | Resistor limitador de corrente para o diodo.       |
-| Botão (Push Button)       | 1          | Para trocar a unidade de medida.          |
-| LED (5mm, qualquer cor)   | 1          | Indicador visual.                         |
-| Resistor de 330Ω          | 1          | Para limitar a corrente do LED.           |
-| Protoboard e Jumpers      | -          | Para montagem do circuito.                |
-| Diodo 1N4007 | 1 | Segurança para caso de alimentação ao contrário. |
-
----
-
-## Diagrama de Conexões
+## Connection Diagram
 
 ![image](https://github.com/user-attachments/assets/5b9d6de1-605c-472b-aeaf-6e6ac170f104)
 
-### Tabela de Conexões (Baseada Literalmente no Esquemático)
+### Pin Mapping
 
-| Componente | Pino no Componente | Pino na Raspberry Pi Pico | Observações |
+| Component | Pin on Component | Raspberry Pi Pico Pin | Notes |
 | :--- | :--- | :--- | :--- |
-| **Display OLED** | VCC | 5V (VBUS - Pino 40)| Ligado na alimentação de 5V. |
-| | GND | GND - Pino 38 | Terra. |
-| | SCL | GP5 (I2C0 SCL) - Pino 7 | Clock do I2C. |
-| | SDA | GP4 (I2C0 SDA) - Pino 6 | Dados do I2C. |
-| **Sensor (Diodo)** | Ânodo (+) | GP26 (ADC0) - Pino 31 | Conectado ao resistor R1. |
-| | Cátodo (-) | GND | |
-| **Resistor R1 10kΩ**| Terminal 1 | 5V (VBUS - Pino 40)| Ligado na alimentação de 5V. |
-| | Terminal 2 | GP26 (ADC0) - Pino 31 | Ponto de leitura para o sensor. |
-| **Botão** | Terminal 1 | GP10 - Pino 14 | |
-| | Terminal 2 | GND | |
-| **LED** | Ânodo (+) | - | Conectado ao Resistor R2. |
-| | Cátodo (-) | GND | |
-| **Resistor R2 330Ω**| Terminal 1 | GP11 - Pino 15 | Limita a corrente para o LED. |
-| | Terminal 2 | - | Conectado ao Ânodo (+) do LED. |
-
----
-
+| **OLED Display** | VCC | 5V (VBUS - Pin 40) | 5V Power supply. |
+| | GND | GND - Pin 38 | Ground. |
+| | SCL | GP5 (I2C0 SCL) - Pin 7 | I2C Clock. |
+| | SDA | GP4 (I2C0 SDA) - Pin 6 | I2C Data. |
+| **Sensor (Diode)** | Anode (+) | GP26 (ADC0) - Pin 31 | Connected to R1 resistor. |
+| | Cathode (-) | GND | Ground. |
+| **Resistor R1 (10kΩ)**| Terminal 1 | 5V (VBUS - Pin 40) | 5V Power supply. |
+| | Terminal 2 | GP26 (ADC0) - Pin 31 | Read point for the sensor. |
+| **Push Button** | Terminal 1 | GP10 - Pin 14 | |
+| | Terminal 2 | GND | Ground. |
+| **LED** | Anode (+) | - | Connected to Resistor R2. |
+| | Cathode (-) | GND | Ground. |
+| **Resistor R2 (330Ω)**| Terminal 1 | GP11 - Pin 15 | Limits current for the LED. |
+| | Terminal 2 | - | Connected to the LED Anode (+). |
 
 ![image](https://github.com/user-attachments/assets/c70c6e0e-c489-4e90-ba06-1f685e367dfe)
 
-## Software do Projeto
+## Software Overview
 
-O projeto foi feito no Vscode (Visual Studio Code), com a extensão Raspberry Pi Pico, na linguagem C/C++ em SDK Pico
+The project was developed in Visual Studio Code (VS Code) using the Raspberry Pi Pico extension, written in C/C++ based on the Pico SDK. 
 
-Nesse projeto foi utilizado o display OLED 128x32, e foram utilizadas algumas bibliotecas e funções dos exemplos dados pela própria extensão Raspberry Pi Pico
+- `CMakeLists.txt`: CMake configuration file responsible for defining how the project is compiled, listing the source files, and linking necessary Pico SDK libraries such as `hardware_i2c` and `hardware_adc`.
+- `main.c`: Contains the main system logic. It handles the initialization of peripherals (ADC, I2C, GPIO), reads the diode temperature, applies the moving average filter, controls the OLED display, and manages events (button and timer).
+- `ssd1306_font.h`: Header file containing the font data (byte array) used to draw alphanumeric characters on the OLED display.
+- `raspberry26x32.h`: Header file storing the bitmap data for a 26x32 pixel image of the Raspberry Pi logo.
 
+### Code Operation
 
-`CMakeLists.txt`: Arquivo de configuração do CMake, responsável por definir como o projeto é compilado, listar os arquivos-fonte e vincular as bibliotecas necessárias do Pico SDK, como hardware_i2c e hardware_adc. 
+The code is structured around a low-power main loop (`__wfi()`) that is awakened by two main interrupts:
 
-`main.c`: Contém toda a lógica principal do sistema. É responsável pela inicialização dos periféricos (ADC, I2C, GPIO), leitura da temperatura do diodo, aplicação do filtro de média móvel, controle do display OLED e gerenciamento de eventos (botão e timer).
+1. **Periodic Timer (`adc_timer_callback`):** Every 500ms, the system reads the voltage on the ADC pin, converts it to temperature, updates the moving average filter, and controls the LED.
+2. **GPIO Interrupt (`button_isr`):** Triggered when the button is pressed. The interrupt service routine flags the main loop to switch the display unit, implementing a software debounce to prevent multiple triggers.
 
-`ssd1306_font.h`: Arquivo de cabeçalho que contém os dados (em formato de array de bytes) da fonte utilizada para desenhar os caracteres alfanuméricos no display OLED.
+### Sensor Calibration
 
-`raspberry26x32.h`: Arquivo de cabeçalho que armazena os dados do bitmap para uma imagem de 26x32 pixels do logo da Raspberry Pi.
+The conversion from the read voltage to temperature in Celsius is done using the following formula:
 
-## Funcionamento do Código
+```c
+Temperature (°C) = (ADC_Voltage - 0.6264) / (-0.0021)
+```
 
-O código é estruturado em torno de um loop principal de baixo consumo (`__wfi()`) que é "acordado" por duas interrupções principais:
+These calibration values (`0.6264` and `-0.0021`) are not arbitrary. They were obtained from experimental data documented in the article *"Termômetro de Alta Sensibilidade Usando Diodo Semicondutor como Elemento Sensor"* (2012).
 
-1.  **Timer Periódico (`adc_timer_callback`):** A cada 500ms, o sistema realiza a leitura da tensão no pino ADC, converte-a para temperatura, atualiza o filtro de média móvel e controla o LED.
-2.  **Interrupção de GPIO (`button_isr`):** Ocorre quando o botão é pressionado. A rotina de interrupção apenas sinaliza ao loop principal que a unidade de exibição deve ser trocada, implementando um debounce por software para evitar múltiplos acionamentos.
+## References
 
-### Calibração do Sensor
-
-A conversão da tensão lida no diodo para temperatura em Celsius é feita com a seguinte fórmula:
-
-`Temperatura (°C) = (Tensão_ADC - 0.6264) / (-0.0021)`
-
-Esses valores de calibração (`0.6264` e `-0.0021`) não são arbitrários. Eles foram obtidos a partir de dados experimentais documentados no artigo **"Termômetro de Alta Sensibilidade Usando Diodo Semicondutor como Elemento Sensor" (2012)**
-
----
-
-
-
-## Referências
-
-- Silva, G. V. et al. (2012). *Termômetro de Alta Sensibilidade Usando Diodo Semicondutor como Elemento Sensor*. CEEL 2012. Disponível em: [https://www.peteletricaufu.com.br/static/ceel/doc/artigos/artigos2012/ceel2012_artigo044_r01.pdf](https://www.peteletricaufu.com.br/static/ceel/doc/artigos/artigos2012/ceel2012_artigo044_r01.pdf)
-
----
+- Silva, G. V. et al. (2012). *Termômetro de Alta Sensibilidade Usando Diodo Semicondutor como Elemento Sensor*. CEEL 2012. Available at: [https://www.peteletricaufu.com.br/static/ceel/doc/artigos/artigos2012/ceel2012_artigo044_r01.pdf](https://www.peteletricaufu.com.br/static/ceel/doc/artigos/artigos2012/ceel2012_artigo044_r01.pdf)
